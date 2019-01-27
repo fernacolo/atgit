@@ -24,6 +24,10 @@ namespace atgit
                         var runner = new Runner(options);
                         return runner.Execute();
 
+                    case OptionsAction.ListOnly:
+                        var listOnly = new ListOnly(options);
+                        return listOnly.Execute();
+
                     default:
                         throw new InvalidOperationException($"Unknown action: {options.Action}");
                 }

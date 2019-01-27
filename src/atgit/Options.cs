@@ -11,8 +11,8 @@ namespace atgit
     {
         public static void ShowIntro()
         {
-            var productVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;            
-            
+            var productVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+
             Console.WriteLine($"atgit {productVersion}");
             Console.WriteLine("Visit the project home at https://github.com/fernacolo/atgit/");
             Console.WriteLine();
@@ -28,15 +28,14 @@ namespace atgit
             Console.WriteLine();
             Console.WriteLine("Options:");
             Console.WriteLine();
-            Console.WriteLine("    --add-to-path        Adds itself to HKEY_CURRENT_USER\\Environment\\Path (Windows only).");
-            Console.WriteLine("    -f, --force          Force execution on all repositories (ignores non-zero exit codes).");
+            Console.WriteLine("    --add-to-path        Add itself to HKEY_CURRENT_USER\\Environment\\Path (Windows only).");
+            Console.WriteLine("    -f, --force          Force execution on all repositories (ignore non-zero exit codes).");
+            Console.WriteLine("    -l, --list           Only list repositories. Do not run any command.");
             Console.WriteLine("    -v, --verbose        Enable verbose logging.");
         }
 
         public Options(string[] args)
         {
-            Action = OptionsAction.None;
-
             var argsScanner = ((IEnumerable<string>) args).GetEnumerator();
             while (argsScanner.MoveNext())
             {
@@ -56,41 +55,49 @@ namespace atgit
                     continue;
                 }
 
-                if (IsAmbiguityError(curArg))
+                if (!SetActionIfNotAmbiguous(curArg + " (run command)", OptionsAction.RunCommand))
                     return;
 
-                Action = OptionsAction.RunCommand;
-                RootDirectory = new DirectoryInfo(new DirectoryInfo(".").FullName);
                 Command = curArg;
                 CommandArguments = Flush(argsScanner);
-                return;
+                break;
             }
 
             if (argsScanner.MoveNext())
                 throw new InvalidOperationException();
 
             if (Action != OptionsAction.None)
+            {
+                if (RootDirectory == null)
+                    RootDirectory = new DirectoryInfo(new DirectoryInfo(".").FullName);
                 return;
+            }
 
             ShowIntro();
-            Action = OptionsAction.ShowHelp;
+            _action = OptionsAction.ShowHelp;
         }
 
-        private bool IsAmbiguityError(string curArg)
+        private bool SetActionIfNotAmbiguous(string curArg, OptionsAction action)
         {
-            if (Action == OptionsAction.None)
-                return false;
+            if (_action == action)
+                return true;
 
-            Action = OptionsAction.ShowHelp;
-            ErrorMessage = $"Ambiguity detected: \"{curArg}\".";
-            ResultCode = ResultCodes.InvalidArguments;
+            if (_action != OptionsAction.None)
+            {
+                _action = OptionsAction.ShowHelp;
+                ErrorMessage = $"Options are mutually exclusive: {_actionArg} and {curArg}.";
+                ResultCode = ResultCodes.InvalidArguments;
+                return false;
+            }
+
+            _action = action;
+            _actionArg = curArg;
             return true;
         }
 
-
         private void SetInvalidArgument(string curArg)
         {
-            Action = OptionsAction.ShowHelp;
+            _action = OptionsAction.ShowHelp;
             ErrorMessage = $"Unrecognized option: \"{curArg}\".";
             ResultCode = ResultCodes.InvalidArguments;
         }
@@ -106,14 +113,14 @@ namespace atgit
             switch (curArg.Substring(2))
             {
                 case "add-to-path":
-                    if (IsAmbiguityError(curArg))
-                        return false;
-                    Action = OptionsAction.AddToPath;
-                    return true;
+                    return SetActionIfNotAmbiguous(curArg, OptionsAction.AddToPath);
 
                 case "force":
                     Force = true;
                     return true;
+
+                case "list":
+                    return SetActionIfNotAmbiguous(curArg, OptionsAction.ListOnly);
 
                 case "verbose":
                     Verbose = true;
@@ -138,16 +145,22 @@ namespace atgit
                 var ch = curArg[i];
                 switch (ch)
                 {
-                    case 'v':
-                        Verbose = true;
-                        break;
-
                     case 'f':
                         Force = true;
                         break;
 
+                    case 'l':
+                        if (!SetActionIfNotAmbiguous("-l", OptionsAction.ListOnly))
+                            return false;
+                        break;
+
+                    case 'v':
+                        Verbose = true;
+                        break;
+
+
                     default:
-                        Action = OptionsAction.ShowHelp;
+                        _action = OptionsAction.ShowHelp;
                         ErrorMessage = $"Unrecognized option character '{ch}' at \"{curArg}\".";
                         ResultCode = ResultCodes.InvalidArguments;
                         return false;
@@ -177,7 +190,10 @@ namespace atgit
             return sb.ToString();
         }
 
-        public OptionsAction Action { get; private set; }
+        private OptionsAction _action;
+        private string _actionArg;
+
+        public OptionsAction Action => _action;
         public bool Verbose { get; private set; }
         public string ErrorMessage { get; private set; }
         public DirectoryInfo RootDirectory { get; }

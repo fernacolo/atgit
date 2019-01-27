@@ -4,7 +4,8 @@ namespace atgit
     {
         None,
         ShowHelp,
+        AddToPath,
         RunCommand,
-        AddToPath
+        ListOnly
     }
 }

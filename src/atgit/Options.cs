@@ -9,7 +9,7 @@ namespace atgit
     {
         public static void ShowIntro()
         {
-            Console.WriteLine("atgit 0.8.1");
+            Console.WriteLine("atgit 0.8.2");
             Console.WriteLine("Visit the project home at https://github.com/fernacolo/atgit/");
             Console.WriteLine();
         }
@@ -18,14 +18,14 @@ namespace atgit
         {
             Console.WriteLine("Usage:");
             Console.WriteLine();
-            Console.WriteLine("    atgit [options] [-- <command>]");
+            Console.WriteLine("    atgit [<options>] [<command>]");
             Console.WriteLine();
             Console.WriteLine("Executes <command> on all Git repositories found in the tree of current directory.");
             Console.WriteLine();
             Console.WriteLine("Options:");
             Console.WriteLine();
-            Console.WriteLine("    -f, --force          Force execution on all repositories (ignores non-zero exit codes).");
             Console.WriteLine("    --add-to-path        Adds itself to HKEY_CURRENT_USER\\Environment\\Path (Windows only).");
+            Console.WriteLine("    -f, --force          Force execution on all repositories (ignores non-zero exit codes).");
             Console.WriteLine("    -v, --verbose        Enable verbose logging.");
         }
 
@@ -37,50 +37,39 @@ namespace atgit
             while (argsScanner.MoveNext())
             {
                 var curArg = argsScanner.Current;
-                if (curArg == "--")
-                {
-                    if (IsAmbiguityError(curArg))
-                        return;
-
-                    if (!argsScanner.MoveNext())
-                    {
-                        Action = OptionsAction.ShowHelp;
-                        ErrorMessage = "A command was not specified after \"--\".";
-                        ResultCode = ResultCodes.InvalidArguments;
-                        return;
-                    }
-
-                    Action = OptionsAction.RunCommand;
-                    RootDirectory = new DirectoryInfo(new DirectoryInfo(".").FullName);
-                    Command = argsScanner.Current;
-                    CommandArguments = Flush(argsScanner);
-                    return;
-                }
 
                 if (curArg.StartsWith("--"))
                 {
-                    ParseOptionArg(curArg, argsScanner);
+                    if (!ParseOptionArg(curArg, argsScanner))
+                        return;
                     continue;
                 }
 
                 if (curArg.StartsWith("-"))
                 {
-                    ParseMultiOptionsArg(curArg, argsScanner);
+                    if (!ParseMultiOptionsArg(curArg, argsScanner))
+                        return;
                     continue;
                 }
 
-                SetInvalidArgument(curArg);
+                if (IsAmbiguityError(curArg))
+                    return;
+
+                Action = OptionsAction.RunCommand;
+                RootDirectory = new DirectoryInfo(new DirectoryInfo(".").FullName);
+                Command = curArg;
+                CommandArguments = Flush(argsScanner);
                 return;
             }
 
             if (argsScanner.MoveNext())
                 throw new InvalidOperationException();
 
-            if (Action == OptionsAction.None)
-            {
-                ShowIntro();
-                Action = OptionsAction.ShowHelp;
-            }
+            if (Action != OptionsAction.None)
+                return;
+
+            ShowIntro();
+            Action = OptionsAction.ShowHelp;
         }
 
         private bool IsAmbiguityError(string curArg)
@@ -102,42 +91,42 @@ namespace atgit
             ResultCode = ResultCodes.InvalidArguments;
         }
 
-        private void ParseOptionArg(string curArg, IEnumerator<string> argsScanner)
+        private bool ParseOptionArg(string curArg, IEnumerator<string> argsScanner)
         {
             if (curArg.Length < 4)
             {
                 SetInvalidArgument(curArg);
-                return;
+                return false;
             }
 
             switch (curArg.Substring(2))
             {
                 case "add-to-path":
                     if (IsAmbiguityError(curArg))
-                        return;
+                        return false;
                     Action = OptionsAction.AddToPath;
-                    return;
+                    return true;
 
                 case "force":
                     Force = true;
-                    return;
+                    return true;
 
                 case "verbose":
                     Verbose = true;
-                    return;
+                    return true;
 
                 default:
                     SetInvalidArgument(curArg);
-                    return;
+                    return false;
             }
         }
 
-        private void ParseMultiOptionsArg(string curArg, IEnumerator<string> argsScanner)
+        private bool ParseMultiOptionsArg(string curArg, IEnumerator<string> argsScanner)
         {
             if (curArg.Length < 2)
             {
                 SetInvalidArgument(curArg);
-                return;
+                return false;
             }
 
             for (var i = 1; i < curArg.Length; ++i)
@@ -151,15 +140,17 @@ namespace atgit
 
                     case 'f':
                         Force = true;
-                        return;
+                        break;
 
                     default:
                         Action = OptionsAction.ShowHelp;
                         ErrorMessage = $"Unrecognized option character '{ch}' at \"{curArg}\".";
                         ResultCode = ResultCodes.InvalidArguments;
-                        return;
+                        return false;
                 }
             }
+
+            return true;
         }
 
         private static string Flush(IEnumerator<string> argsScanner)

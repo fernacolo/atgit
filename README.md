@@ -1,12 +1,12 @@
-# What is atgit?
+# Overview
 
-`atgit` is a tiny command line tool for running the same command on multiple Git repositories. It detects Git repositories that are reside in the current directory tree, and run your desired command on each of them.
+`atgit` is a command line tool for running the same command on multiple Git repositories. It detects Git repositories that are reside in the current directory tree, and run your desired command on each of them.
 
 Yes, I know that there are other tools for that: [gr](https://github.com/mixu/gr), [myrepos](http://myrepos.branchable.com/), [meta](https://www.npmjs.com/package/meta) and possibly others. But I was in need of something that does not depend on Node.js or Perl, and to be installable from the [Nuget Gallery](https://www.nuget.org/).
 
 # Getting started
 
-Please grab the latest version and see installation instructions [here](https://www.nuget.org/packages/atgit/).
+The latest version and installation instructions can be found [here](https://www.nuget.org/packages/atgit/).
 
 Once installed in your Nuget cache, find the exe and run `atgit --add-to-path` to add the tool to your path, then you are good to go. At any time, run `atgit` without parameters to see help.
 
@@ -14,7 +14,7 @@ Once installed in your Nuget cache, find the exe and run `atgit --add-to-path` t
 
 ## Example 1: get status of all repositories
 
-Command: `atgit -- git status -sb`
+Command: `atgit git status -sb`
 
 Output:
 
@@ -36,7 +36,7 @@ Output:
 
 ## Example 2: show contents of version.txt at root of every repository
 
-Command: `atgit -- cmd /c "type version.txt"`
+Command: `atgit cmd /c "type version.txt"`
 
 Output:
 
@@ -57,7 +57,7 @@ Output:
 
 ## Example 3: pull all repositories avoiding merge bubbles (i.e. fast-forward)
 
-Command: `atgit -f -- git pull --ff-only`
+Command: `atgit -f git pull --ff-only`
 
 Output:
 
@@ -90,7 +90,7 @@ Output:
 
 ## Example 4: see recent commits in all repositories
 
-Command: `atgit -- git log --since=\"5 days ago\" --oneline`
+Command: `atgit git log --since=\"5 days ago\" --oneline`
 
 Output:
 

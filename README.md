@@ -1,6 +1,6 @@
 # Overview
 
-`atgit` is a command line tool for running the same command on multiple Git repositories. It detects Git repositories that are reside in the current directory tree, and run your desired command on each of them.
+`atgit` is a command line tool for running the same command on multiple Git repositories. It detects Git repositories inside the tree of current directory, and runs your desired command on each of them.
 
 Yes, I know that there are other tools for that: [gr](https://github.com/mixu/gr), [myrepos](http://myrepos.branchable.com/), [meta](https://www.npmjs.com/package/meta) and possibly others. But I was in need of something that does not depend on Node.js or Perl, and to be installable from the [Nuget Gallery](https://www.nuget.org/).
 

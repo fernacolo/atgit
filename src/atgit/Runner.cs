@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -21,10 +22,12 @@ namespace atgit
                     Error(() => $"Exit code: {result}.");
                     if (!_options.Force)
                     {
-                        Info(() => $"Aborted because of error. Use -f to keep running on errors.");
+                        Info(() => $"Aborted. Use -f to keep running on errors.");
                         return result;
                     }
                 }
+                
+                Console.WriteLine();
             }
 
             return 0;

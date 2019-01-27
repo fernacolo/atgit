@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace atgit
@@ -9,7 +11,9 @@ namespace atgit
     {
         public static void ShowIntro()
         {
-            Console.WriteLine("atgit 0.8.2");
+            var productVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;            
+            
+            Console.WriteLine($"atgit {productVersion}");
             Console.WriteLine("Visit the project home at https://github.com/fernacolo/atgit/");
             Console.WriteLine();
         }

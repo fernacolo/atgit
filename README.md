@@ -4,11 +4,15 @@
 
 Yes, I know that there are other tools for that: [gr](https://github.com/mixu/gr), [myrepos](http://myrepos.branchable.com/), [meta](https://www.npmjs.com/package/meta) and possibly others. But I was in need of something that does not depend on Node.js or Perl, and to be installable from the [Nuget Gallery](https://www.nuget.org/).
 
-# Getting started
+# Installation
 
-The latest version and installation instructions can be found [here](https://www.nuget.org/packages/atgit/).
+**Prerequisite:** .NET Core. Installation instructions for Windows, Linux or Mac OS are [here](https://dotnet.microsoft.com/download).
 
-Once installed in your Nuget cache, find the exe and run `atgit --add-to-path` to add the tool to your path, then you are good to go. At any time, run `atgit` without parameters to see help.
+Install `atgit` with this command:
+
+    > dotnet tool install -g atgit
+
+Run `atgit` without parameters to get basic help, or pick the examples below.
 
 # Examples
 

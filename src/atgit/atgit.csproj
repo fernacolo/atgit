@@ -4,14 +4,15 @@
         <OutputType>Exe</OutputType>
         <LangVersion>7.3</LangVersion>
         <RootNamespace>atgit</RootNamespace>
-        <TargetFrameworks>net452;netcoreapp2.0;netcoreapp2.1;netcoreapp2.2</TargetFrameworks>
-        <VersionPrefix>0.8.7</VersionPrefix>
+        <TargetFrameworks>netcoreapp2.1;netcoreapp2.2</TargetFrameworks>
+        <VersionPrefix>0.8.8</VersionPrefix>
         <Title>atgit</Title>
         <Authors>Fernando Colombo</Authors>
         <Description>atgit - Runs command on multiple Git repositories</Description>
         <PackageProjectUrl>https://github.com/fernacolo/atgit</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/fernacolo/atgit/blob/master/LICENSE</PackageLicenseUrl>
         <PackageType>DotnetTool</PackageType>
+        <PackAsTool>true</PackAsTool>
         <RepositoryUrl>https://github.com/fernacolo/atgit.git</RepositoryUrl>
         <RepositoryType>Git</RepositoryType>
     </PropertyGroup>

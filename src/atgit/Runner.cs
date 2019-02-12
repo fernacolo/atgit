@@ -40,6 +40,7 @@ namespace atgit
             si.FileName = _options.Command;
             si.Arguments = _options.CommandArguments;
             Info(() => repo.FullName);
+            Verbose(() => si.FileName + " " + si.Arguments);
             var process = Process.Start(si);
             process.WaitForExit();
             return process.ExitCode;

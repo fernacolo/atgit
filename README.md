@@ -2,11 +2,11 @@
 
 `atgit` is a command line tool for running the same command on multiple Git repositories. It detects Git repositories inside the tree of current directory, and runs your desired command on each of them.
 
-Yes, I know that there are other tools for that: [gr](https://github.com/mixu/gr), [myrepos](http://myrepos.branchable.com/), [meta](https://www.npmjs.com/package/meta) and possibly others. But I was in need of something that does not depend on Node.js or Perl, and to be installable from the [Nuget Gallery](https://www.nuget.org/).
+Yes, I know that there are other tools for that: [gr](https://github.com/mixu/gr), [myrepos](http://myrepos.branchable.com/), [meta](https://www.npmjs.com/package/meta) and possibly others. But I was in need of something that does not depend on Node.js or Perl, and to be installable from the [Nuget Gallery](https://www.nuget.org/packages/atgit/).
 
 # Installation
 
-**Prerequisite:** .NET Core. Installation instructions for Windows, Linux or Mac OS are [here](https://dotnet.microsoft.com/download).
+**Prerequisite:** [.NET Core](https://dotnet.microsoft.com/download). Follow that link for installing on Windows, Linux or Mac OS.
 
 Install `atgit` with this command:
 
